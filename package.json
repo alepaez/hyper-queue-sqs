@@ -1,0 +1,29 @@
+{
+  "name": "hyperq-sqs",
+  "version": "0.0.1",
+  "description": "SQS Queue adapter to hyperq library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest --coverage",
+    "lint": "tslint 'src/**/*.ts'",
+    "build": "rm -rf dist && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alepaez/hyper-queue-sqs.git"
+  },
+  "author": "Alexandre Paez Sequeira",
+  "license": "GNU GENERAL PUBLIC LICENSE v3",
+  "bugs": {
+    "url": "https://github.com/alepaez/hyper-queue-sqs/issues"
+  },
+  "homepage": "https://github.com/alepaez/hyper-queue-sqs#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.1.5"
+  }
+}
