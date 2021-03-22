@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/alepaez/hyper-queue-sqs#readme",
   "devDependencies": {
+    "@aws-sdk/client-sqs": "^3.9.0",
     "@types/jest": "^26.0.20",
+    "hyperq": "0.1.2",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.1",
     "tslint": "^6.1.3",
