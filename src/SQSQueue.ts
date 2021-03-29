@@ -1,4 +1,4 @@
-import { SQSClient, CreateQueueCommand, SendMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
+import { SQSClient, CreateQueueCommand, SendMessageCommand, ReceiveMessageCommand, DeleteMessageCommand, ChangeMessageVisibilityCommand } from "@aws-sdk/client-sqs";
 import { Queue, Message } from 'hyperq';
 
 export default class SQSQueue implements Queue {
@@ -32,15 +32,38 @@ export default class SQSQueue implements Queue {
       QueueUrl: this.QueueUrl
     }));
 
-    const body = Messages?.[0]?.Body;
+    const message = Messages?.[0];
+
+    const body = message?.Body;
 
     if (!body) return;
 
     return {
       body,
-      retry: async () => { return true; },
-      delete: async () => { return true; },
+      retry: this.retry(message?.ReceiptHandle),
+      delete: this.delete(message?.ReceiptHandle),
     };
+  }
+
+  private retry(ReceiptHandle: string | undefined): () => Promise<boolean> {
+    return async () => {
+      await this.sqs.send(new ChangeMessageVisibilityCommand({
+        QueueUrl: this.QueueUrl,
+        ReceiptHandle,
+        VisibilityTimeout: 0,
+      }))
+      return true;
+    }
+  }
+
+  private delete(ReceiptHandle: string | undefined): () => Promise<boolean> {
+    return async () => {
+      await this.sqs.send(new DeleteMessageCommand({
+        QueueUrl: this.QueueUrl,
+        ReceiptHandle,
+      }))
+      return true;
+    }
   }
 };
 

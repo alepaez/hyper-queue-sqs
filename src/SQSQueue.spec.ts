@@ -1,4 +1,4 @@
-import { ListQueuesCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
+import { ListQueuesCommand, ReceiveMessageCommand, GetQueueAttributesCommand } from "@aws-sdk/client-sqs";
 import SQSQueue from './SQSQueue';
 
 import { createSQSConnection } from './testHelper';
@@ -44,3 +44,40 @@ test('pop message from sqs queue', async () => {
   const message = await sqsQueue.pop();
   expect(message?.body).toEqual('Hello World');
 });
+
+test('pop returns undefined when there is no message', async () => {
+  const sqs = createSQSConnection();
+  const sqsQueue = new SQSQueue(sqs, 'queue1');
+  await sqsQueue.build();
+  const message = await sqsQueue.pop();
+  expect(message).toEqual(undefined);
+});
+
+test('message delete function deletes message from the queue', async () => {
+  const sqs = createSQSConnection();
+  const sqsQueue = new SQSQueue(sqs, 'queue1');
+  await sqsQueue.build();
+  await sqsQueue.push('Hello World');
+
+  const message = await sqsQueue.pop();
+
+  await message?.delete();
+
+  const { Attributes } = await sqs.send(new GetQueueAttributesCommand({ QueueUrl: sqsQueue.QueueUrl }));
+  expect(Attributes?.ApproximateNumberOfMessagesNotVisible).toEqual('0');
+});
+
+test('message retry function free message to be executed', async () => {
+  const sqs = createSQSConnection();
+  const sqsQueue = new SQSQueue(sqs, 'queue1');
+  await sqsQueue.build();
+  await sqsQueue.push('Hello World');
+
+  const message = await sqsQueue.pop();
+
+  await message?.retry();
+
+  const { Attributes } = await sqs.send(new GetQueueAttributesCommand({ QueueUrl: sqsQueue.QueueUrl }));
+  expect(Attributes?.ApproximateNumberOfMessages).toEqual('1');
+});
+
