@@ -1,11 +1,9 @@
 import { SQSClient, ListQueuesCommand, DeleteQueueCommand } from "@aws-sdk/client-sqs";
 
-const localstackHost = process.env.LOCALSTACK_HOST || 'localhost';
-
 const createSQSConnection = (): SQSClient => {
   return new SQSClient({
     region: "us-east-1",
-    endpoint: `http://${localstackHost}:4566`,
+    endpoint: 'http://localhost:4566',
   });
 };
 
