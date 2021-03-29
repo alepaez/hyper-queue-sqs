@@ -21,10 +21,7 @@ jobs:
     - run: npm run lint
     - run: npm run build
     - run: docker-compose up -d
-    - name: Sleep
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '60s'
+    - run: docker ps -a
     - run: npm test
     - name: Coveralls
       uses: coverallsapp/github-action@master
