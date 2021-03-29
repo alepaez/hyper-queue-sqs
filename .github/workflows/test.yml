@@ -16,13 +16,15 @@ jobs:
         env:
           SERVICES: s3
           DEFAULT_REGION: eu-west-1
+          AWS_ACCESS_KEY_ID: teste
+          AWS_SECRET_ACCESS_KEY: teste
         ports:
           - 4566:4566
           - 4571:4571
     env:
       AWS_ACCESS_KEY_ID: teste
       AWS_SECRET_ACCESS_KEY: teste
-
+      AWS_DEFAULT_REGION: eu-west-1
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
